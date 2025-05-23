@@ -1,0 +1,837 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Users, Calendar, Clock, Filter, ChevronDown, Search, Plus, X, CheckCircle, Star, BookOpen, MessageSquare } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { Avatar } from '../components/ui/Avatar';
+import { mockUsers, mockTutorSessions, mockTutorAvailabilities } from '../data/mockData';
+import { SessionCard } from '../components/features/SessionCard';
+import { UserBadge } from '../components/features/UserBadge';
+
+export function EduBridge() {
+  // Current user - in a real app would come from auth context
+  const currentUser = mockUsers[0]; // Alex (student)
+  
+  const [activeTab, setActiveTab] = useState<'sessions' | 'tutors' | 'availability' | 'badges'>('sessions');
+  const [subjectFilter, setSubjectFilter] = useState<string>('');
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [showTutorProfile, setShowTutorProfile] = useState(false);
+  const [selectedTutor, setSelectedTutor] = useState<any>(null);
+  
+  // Form state
+  const [sessionDate, setSessionDate] = useState('');
+  const [sessionTime, setSessionTime] = useState('');
+  const [sessionSubject, setSessionSubject] = useState('');
+  const [sessionTopic, setSessionTopic] = useState('');
+  
+  // Get user's tutor sessions
+  const userSessions = mockTutorSessions.filter(
+    session => session.studentId === currentUser.id || session.tutorId === currentUser.id
+  );
+  
+  // Get available tutors
+  const availableTutors = mockUsers.filter(user => 
+    user.role === 'tutor' && 
+    (!subjectFilter || user.subjects?.includes(subjectFilter))
+  );
+
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+
+  // Reset form state
+  const resetFormState = () => {
+    setSessionDate('');
+    setSessionTime('');
+    setSessionSubject('');
+    setSessionTopic('');
+    setSelectedTutor(null);
+  };
+
+  // Close request form and reset state
+  const handleCloseRequestForm = () => {
+    setShowRequestForm(false);
+    resetFormState();
+  };
+
+  const handleBookSession = (tutor: any) => {
+    try {
+      // Create new session with default values
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1); // Book for tomorrow by default
+      tomorrow.setHours(10, 0, 0, 0); // Set to 10:00 AM
+      
+      const newSession = {
+        id: `session-${Date.now()}`,
+        studentId: currentUser.id,
+        tutorId: tutor.id,
+        subject: tutor.subjects?.[0] || 'General', // Default to first subject
+        topic: 'General Discussion',
+        date: tomorrow, // Pass the Date object directly
+        duration: 60, // Default duration
+        status: 'scheduled',
+        notes: ''
+      };
+      
+      // Add to sessions (in a real app, this would be an API call)
+      mockTutorSessions.push(newSession);
+      
+      // Show notification
+      setNotificationMessage(`Session booked with ${tutor.name}! Added to your sessions.`);
+      setShowNotification(true);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+      
+      // Switch to sessions tab
+      setActiveTab('sessions');
+    } catch (error) {
+      console.error('Error booking session:', error);
+      setNotificationMessage('Error booking session. Please try again.');
+      setShowNotification(true);
+    }
+  };
+
+  const handleRequestSession = () => {
+    try {
+      if (!sessionDate || !sessionTime || !sessionSubject || !sessionTopic) {
+        setNotificationMessage('Please fill in all fields');
+        setShowNotification(true);
+        return;
+      }
+
+      // Create a proper Date object from the date and time
+      const [hours, minutes] = sessionTime.split(':').map(Number);
+      const sessionDateTime = new Date(sessionDate);
+      sessionDateTime.setHours(hours, minutes, 0, 0);
+
+      // Validate date
+      if (isNaN(sessionDateTime.getTime())) {
+        setNotificationMessage('Invalid date or time format');
+        setShowNotification(true);
+        return;
+      }
+
+      // Show request submitted notification
+      setNotificationMessage('Session request submitted successfully! The tutor will review and confirm your request.');
+      setShowNotification(true);
+      
+      // Reset form and close modal
+      handleCloseRequestForm();
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+      
+      // Switch to sessions tab
+      setActiveTab('sessions');
+    } catch (error) {
+      console.error('Error requesting session:', error);
+      setNotificationMessage('Error submitting request. Please try again.');
+      setShowNotification(true);
+    }
+  };
+
+  const handleViewProfile = (tutor: any) => {
+    setSelectedTutor(tutor);
+    setShowTutorProfile(true);
+  };
+
+  const fadeIn = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.3 }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-4 right-4 z-50"
+          >
+            <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg shadow-lg p-4 flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 mr-3" />
+              <p className="text-green-800 dark:text-green-200">{notificationMessage}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">EduBridge</h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">Connect with tutors and get help with your studies</p>
+        </div>
+        <div className="mt-4 md:mt-0">
+          <Button 
+            variant="primary" 
+            onClick={() => {
+              setShowRequestForm(true);
+              setSelectedTutor(null);
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Request Session
+          </Button>
+        </div>
+      </div>
+      
+      {/* Tabs */}
+      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <nav className="flex -mb-px">
+          <button
+            onClick={() => setActiveTab('sessions')}
+            className={`py-4 px-1 mr-8 font-medium text-sm border-b-2 ${
+              activeTab === 'sessions'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+            }`}
+          >
+            Sessions
+          </button>
+          <button
+            onClick={() => setActiveTab('tutors')}
+            className={`py-4 px-1 mr-8 font-medium text-sm border-b-2 ${
+              activeTab === 'tutors'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+            }`}
+          >
+            Find Tutors
+          </button>
+          <button
+            onClick={() => setActiveTab('availability')}
+            className={`py-4 px-1 mr-8 font-medium text-sm border-b-2 ${
+              activeTab === 'availability'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+            }`}
+          >
+            Availability
+          </button>
+          <button
+            onClick={() => setActiveTab('badges')}
+            className={`py-4 px-1 mr-8 font-medium text-sm border-b-2 ${
+              activeTab === 'badges'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+            }`}
+          >
+            Badges
+          </button>
+        </nav>
+      </div>
+
+      {/* Request Session Modal */}
+      {showRequestForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {selectedTutor ? `Request Session with ${selectedTutor.name}` : 'Request New Session'}
+              </h3>
+              <button
+                onClick={handleCloseRequestForm}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Date
+                </label>
+                <Input
+                  type="date"
+                  value={sessionDate}
+                  onChange={(e) => setSessionDate(e.target.value)}
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Time
+                </label>
+                <Input
+                  type="time"
+                  value={sessionTime}
+                  onChange={(e) => setSessionTime(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Subject
+                </label>
+                <select
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  value={sessionSubject}
+                  onChange={(e) => setSessionSubject(e.target.value)}
+                  required
+                >
+                  <option value="">Select Subject</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="English Literature">English Literature</option>
+                  <option value="Writing">Writing</option>
+                  <option value="Economics">Economics</option>
+                  <option value="Business">Business</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Topic
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter specific topic"
+                  value={sessionTopic}
+                  onChange={(e) => setSessionTopic(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={handleCloseRequestForm}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleRequestSession}
+              >
+                Request Session
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Tutor Profile Modal */}
+      {showTutorProfile && selectedTutor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl"
+          >
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-center">
+                <Avatar
+                  src={selectedTutor.avatar}
+                  alt={selectedTutor.name}
+                  size="xl"
+                />
+                <div className="ml-4">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    {selectedTutor.name}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {selectedTutor.bio}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTutorProfile(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                  Subjects Covered
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedTutor.subjects?.map((subject: string) => (
+                    <Badge key={subject} variant="primary">
+                      {subject}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                  Session History
+                </h4>
+                <div className="space-y-3">
+                  {mockTutorSessions
+                    .filter(session => session.tutorId === selectedTutor.id)
+                    .slice(0, 3)
+                    .map(session => (
+                      <div
+                        key={session.id}
+                        className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg"
+                      >
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {session.subject}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Topic: {session.topic}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {new Date(session.date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowTutorProfile(false)}
+              >
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowTutorProfile(false);
+                  handleBookSession(selectedTutor);
+                }}
+              >
+                Book Session
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      
+      {/* Sessions Tab */}
+      {activeTab === 'sessions' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Sessions</h2>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm">
+                <Calendar className="h-4 w-4 mr-2" />
+                Calendar View
+              </Button>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+          
+          {userSessions.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {userSessions.map((session) => {
+                const tutor = mockUsers.find(u => u.id === session.tutorId)!;
+                const student = mockUsers.find(u => u.id === session.studentId)!;
+                
+                return (
+                  <motion.div
+                    key={session.id}
+                    {...fadeIn}
+                  >
+                    <SessionCard 
+                      session={session} 
+                      tutor={tutor} 
+                      student={student} 
+                      currentUserId={currentUser.id} 
+                    />
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                <Calendar className="h-8 w-8 text-gray-500 dark:text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No sessions yet</h3>
+              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
+                You don't have any tutoring sessions scheduled yet. Find a tutor and book your first session!
+              </p>
+              <Button variant="primary" onClick={() => setActiveTab('tutors')}>
+                Find a Tutor
+              </Button>
+            </div>
+          )}
+        </motion.div>
+      )}
+      
+      {/* Find Tutors Tab */}
+      {activeTab === 'tutors' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Available Tutors</h2>
+            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input 
+                  placeholder="Search tutors..." 
+                  className="pl-10"
+                />
+              </div>
+              <select 
+                className="h-10 w-full sm:w-auto rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                value={subjectFilter}
+                onChange={(e) => setSubjectFilter(e.target.value)}
+              >
+                <option value="">All Subjects</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="English Literature">English Literature</option>
+                <option value="Writing">Writing</option>
+                <option value="Economics">Economics</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {availableTutors.map((tutor) => (
+              <motion.div
+                key={tutor.id}
+                {...fadeIn}
+              >
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-start">
+                      <Avatar 
+                        src={tutor.avatar} 
+                        alt={tutor.name} 
+                        size="lg" 
+                      />
+                      <div className="ml-4">
+                        <h3 className="font-medium text-gray-900 dark:text-white">{tutor.name}</h3>
+                        <Badge variant="secondary" className="mt-1">
+                          {tutor.points} points
+                        </Badge>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                          {tutor.bio}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Subjects:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {tutor.subjects?.map((subject) => (
+                          <Badge key={subject} variant="primary">
+                            {subject}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex space-x-3">
+                      <Button 
+                        variant="primary"
+                        onClick={() => handleBookSession(tutor)}
+                      >
+                        Book Session
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => handleViewProfile(tutor)}
+                      >
+                        View Profile
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Availability Tab */}
+      {activeTab === 'availability' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {currentUser.role === 'tutor' ? 'Your Availability' : 'Tutor Availability'}
+            </h2>
+            {currentUser.role === 'tutor' && (
+              <Button variant="primary" size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Time Slot
+              </Button>
+            )}
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+            <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
+              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                <div key={day} className="px-4 py-3 text-center font-medium text-gray-900 dark:text-white">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 min-h-[300px]">
+              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                const dayAvailability = mockTutorAvailabilities.filter(
+                  avail => avail.dayOfWeek === dayIndex
+                );
+                
+                return (
+                  <div 
+                    key={dayIndex}
+                    className="border-r border-gray-200 dark:border-gray-700 last:border-r-0 p-2"
+                  >
+                    {dayAvailability.map((avail) => {
+                      const tutor = mockUsers.find(u => u.id === avail.tutorId)!;
+                      
+                      return (
+                        <motion.div
+                          key={avail.id}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="mb-2 p-2 bg-primary-100 dark:bg-primary-900/30 rounded text-xs"
+                        >
+                          <div className="flex items-center">
+                            <Avatar 
+                              src={tutor.avatar} 
+                              alt={tutor.name} 
+                              size="sm" 
+                              className="mr-1"
+                            />
+                            <span className="font-medium">{tutor.name}</span>
+                          </div>
+                          <div className="mt-1 flex items-center">
+                            <Clock className="h-3 w-3 mr-1 text-gray-500 dark:text-gray-400" />
+                            {avail.startTime} - {avail.endTime}
+                          </div>
+                          <div className="mt-1">
+                            {avail.subjects.map((subject) => (
+                              <Badge key={subject} variant="primary" size="sm" className="mr-1 mt-1">
+                                {subject}
+                              </Badge>
+                            ))}
+                          </div>
+                          {currentUser.role === 'student' && (
+                            <Button variant="primary" size="sm" className="w-full mt-2 py-1 h-7">
+                              Book
+                            </Button>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Badges Tab */}
+      {activeTab === 'badges' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Tutor Achievements</h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Earn badges by helping students and maintaining high-quality tutoring sessions
+            </p>
+          </div>
+          
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Progress Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center mb-4">
+                <div className="mr-4">
+                  <Avatar 
+                    src={currentUser.avatar} 
+                    alt={currentUser.name} 
+                    size="xl" 
+                  />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {currentUser.name}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {currentUser.role === 'tutor' ? 'Tutor' : 'Student'}
+                  </p>
+                  <div className="mt-2 flex items-center">
+                    <Badge variant="primary" className="mr-2">
+                      {currentUser.points} points
+                    </Badge>
+                    <Badge variant="accent">
+                      {currentUser.badges.length} badges earned
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Points to next level:</h4>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                  <div 
+                    className="bg-primary-600 h-2.5 rounded-full" 
+                    style={{ width: `${Math.min((currentUser.points / 500) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between mt-1 text-xs text-gray-600 dark:text-gray-400">
+                  <span>{currentUser.points} points</span>
+                  <span>500 points</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Available Badges</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Tutor-specific badges */}
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mr-4">
+                      <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Student Success</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Help 10 students achieve their goals</p>
+                    </div>
+                  </div>
+                  <Badge variant="primary">In Progress</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center mr-4">
+                      <Calendar className="h-6 w-6 text-success-600 dark:text-success-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Consistent Tutor</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Complete 20 sessions without cancellation</p>
+                    </div>
+                  </div>
+                  <Badge variant="success">Earned</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center mr-4">
+                      <Star className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Top Rated</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Maintain a 4.5+ rating for 10 sessions</p>
+                    </div>
+                  </div>
+                  <Badge variant="warning">In Progress</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mr-4">
+                      <BookOpen className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Subject Expert</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Complete 15 sessions in a single subject</p>
+                    </div>
+                  </div>
+                  <Badge variant="accent">Available</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mr-4">
+                      <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Time Management</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Complete 30 sessions on time</p>
+                    </div>
+                  </div>
+                  <Badge variant="primary">Available</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div {...fadeIn}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center mr-4">
+                      <MessageSquare className="h-6 w-6 text-success-600 dark:text-success-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">Communication Pro</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Receive 5 positive feedback comments</p>
+                    </div>
+                  </div>
+                  <Badge variant="success">Earned</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
