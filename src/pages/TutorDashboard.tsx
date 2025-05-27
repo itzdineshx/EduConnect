@@ -33,15 +33,15 @@ const translations = {
     tutorProfile: 'Tutor Profile',
     tutoringRequests: 'Tutoring Requests',
     scheduledSessions: 'Scheduled Sessions',
-    activeLearners: 'Active learners',
-    thisMonth: 'This month',
-    outOfFive: 'Out of 5.0',
-    sessionCompletion: 'Session completion',
-    avgResponseTime: 'Average Response Time',
+    activeLearners: 'Active Learners',
+    thisMonth: 'This Month',
+    outOfFive: 'out of 5.0',
+    sessionCompletion: 'Session Completion',
+    avgResponseTime: 'Avg. Response Time',
     studentRetentionRate: 'Student Retention Rate',
     satisfactionScore: 'Satisfaction Score',
     sessionCompletionRate: 'Session Completion Rate',
-    students: 'students',
+    students: 'Students',
     subjects: 'Subjects',
     languages: 'Languages',
     education: 'Education',
@@ -56,11 +56,23 @@ const translations = {
     decline: 'Decline',
     startSession: 'Start Session',
     endSession: 'End Session',
-    sessionWith: 'session with',
-    newReviewFrom: 'New review from',
+    sessionWith: 'Session with',
+    newReviewFrom: 'New Review from',
     feedback: 'Feedback',
     statusColon: 'Status:',
     typeColon: 'Type:',
+    actions: 'Actions',
+    reschedule: 'Reschedule',
+    cancel: 'Cancel',
+    viewDetails: 'View Details',
+    sendMessage: 'Send Message',
+    ratings: 'Ratings',
+    reviews: 'Reviews',
+    earnings: 'Earnings',
+    paymentHistory: 'Payment History',
+    settings: 'Settings',
+    help: 'Help',
+    logout: 'Logout'
   },
   ta: {
     dashboardOverview: 'டாஷ்போர்டு கண்ணோட்டம்',
@@ -103,6 +115,18 @@ const translations = {
     feedback: 'பின்னூட்டம்',
     statusColon: 'நிலை:',
     typeColon: 'வகை:',
+    actions: 'செயல்கள்',
+    reschedule: 'மறுதிட்டமிடு',
+    cancel: 'ரத்து செய்',
+    viewDetails: 'விவரங்களைக் காண்க',
+    sendMessage: 'செய்தி அனுப்பு',
+    ratings: 'மதிப்பீடுகள்',
+    reviews: 'விமர்சனங்கள்',
+    earnings: 'வருமானம்',
+    paymentHistory: 'பணப்பரிவர்த்தனை வரலாறு',
+    settings: 'அமைப்புகள்',
+    help: 'உதவி',
+    logout: 'வெளியேறு'
   },
 };
 
@@ -342,8 +366,8 @@ const TutorDashboard: React.FC = () => {
           date: request.date,
           time: request.time,
           duration: request.duration,
-          status: 'scheduled',
-          type: 'video' as 'video' | 'voice' | 'text', // Specify type explicitly
+          status: 'scheduled' as const,
+          type: 'video' as const,
         };
         setSessions(prev => [...prev, newSession]);
         console.log('New session created:', newSession);
@@ -685,7 +709,7 @@ const TutorDashboard: React.FC = () => {
             language === 'en' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
           }`}
         >
-          English
+          {language === 'en' ? 'English' : 'ஆங்கிலம்'}
         </button>
         <button 
           onClick={() => setLanguage('ta')}
@@ -693,7 +717,7 @@ const TutorDashboard: React.FC = () => {
             language === 'ta' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
           }`}
         >
-          தமிழ்
+          {language === 'en' ? 'Tamil' : 'தமிழ்'}
         </button>
       </div>
 
@@ -708,7 +732,7 @@ const TutorDashboard: React.FC = () => {
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            Overview
+            {translations[language].dashboardOverview}
           </button>
           <button
             onClick={() => setActiveTab('profile')}

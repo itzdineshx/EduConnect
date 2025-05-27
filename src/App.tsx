@@ -9,6 +9,7 @@ import { StudyBuddy } from './pages/StudyBuddy';
 import { EduAssist } from './pages/EduAssist';
 import TutorDashboard from './pages/TutorDashboard';
 import { useAuth } from './lib/auth';
+import { LanguageProvider } from './lib/language';
 
 function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) {
   const user = useAuth(state => state.user);
@@ -19,59 +20,58 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
   return <>{children}</>;
 }
 
-function App() {
-  const user = useAuth(state => state.user);
-
+export default function App() {
   return (
+    <LanguageProvider>
     <Router>
+        <Layout>
       <Routes>
+            <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={
+            <Route
+              path="/edubridge"
+              element={
           <ProtectedRoute>
-            <Layout>
-              {user?.role === 'tutor' ? <TutorDashboard /> : <Home />}
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/tutor-dashboard" element={
-          <ProtectedRoute allowedRoles={['tutor']}>
-            <Layout>
-              <TutorDashboard />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/edubridge" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Layout>
               <EduBridge />
-            </Layout>
           </ProtectedRoute>
-        } />
-        <Route path="/mindmap" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Layout>
+              }
+            />
+            <Route
+              path="/mindmap"
+              element={
+                <ProtectedRoute>
               <MindMap />
-            </Layout>
           </ProtectedRoute>
-        } />
-        <Route path="/studybuddy" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Layout>
+              }
+            />
+            <Route
+              path="/studybuddy"
+              element={
+                <ProtectedRoute>
               <StudyBuddy />
-            </Layout>
           </ProtectedRoute>
-        } />
-        <Route path="/eduassist" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Layout>
+              }
+            />
+            <Route
+              path="/eduassist"
+              element={
+                <ProtectedRoute>
               <EduAssist />
-            </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tutor-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['tutor']}>
+                  <TutorDashboard />
           </ProtectedRoute>
-        } />
+              }
+            />
       </Routes>
+        </Layout>
     </Router>
+    </LanguageProvider>
   );
 }
-
-export default App;

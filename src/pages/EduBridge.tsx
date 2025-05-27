@@ -79,7 +79,7 @@ export function EduBridge() {
       mockTutorSessions.push(newSession);
       
       // Show notification
-      setNotificationMessage(`Session booked with ${tutor.name}! Added to your sessions.`);
+      setNotificationMessage(`${tutor.name} உடன் வகுப்பு பதிவு செய்யப்பட்டது! உங்கள் வகுப்புகளில் சேர்க்கப்பட்டது.`);
       setShowNotification(true);
       
       // Hide notification after 3 seconds
@@ -91,7 +91,7 @@ export function EduBridge() {
       setActiveTab('sessions');
     } catch (error) {
       console.error('Error booking session:', error);
-      setNotificationMessage('Error booking session. Please try again.');
+      setNotificationMessage('வகுப்பு பதிவில் பிழை. மீண்டும் முயற்சிக்கவும்.');
       setShowNotification(true);
     }
   };
@@ -99,7 +99,7 @@ export function EduBridge() {
   const handleRequestSession = () => {
     try {
       if (!sessionDate || !sessionTime || !sessionSubject || !sessionTopic) {
-        setNotificationMessage('Please fill in all fields');
+        setNotificationMessage('அனைத்து விவரங்களையும் நிரப்பவும்');
         setShowNotification(true);
         return;
       }
@@ -111,13 +111,13 @@ export function EduBridge() {
 
       // Validate date
       if (isNaN(sessionDateTime.getTime())) {
-        setNotificationMessage('Invalid date or time format');
+        setNotificationMessage('தவறான தேதி அல்லது நேர வடிவம்');
         setShowNotification(true);
         return;
       }
 
       // Show request submitted notification
-      setNotificationMessage('Session request submitted successfully! The tutor will review and confirm your request.');
+      setNotificationMessage('வகுப்பு கோரிக்கை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! ஆசிரியர் உங்கள் கோரிக்கையை மதிப்பாய்வு செய்து உறுதிப்படுத்துவார்.');
       setShowNotification(true);
       
       // Reset form and close modal
@@ -132,7 +132,7 @@ export function EduBridge() {
       setActiveTab('sessions');
     } catch (error) {
       console.error('Error requesting session:', error);
-      setNotificationMessage('Error submitting request. Please try again.');
+      setNotificationMessage('கோரிக்கை சமர்ப்பிப்பதில் பிழை. மீண்டும் முயற்சிக்கவும்.');
       setShowNotification(true);
     }
   };
@@ -146,6 +146,16 @@ export function EduBridge() {
     initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.3 }
+  };
+
+  // Form labels and notifications
+  const notifications = {
+    fillFields: 'அனைத்து விவரங்களையும் நிரப்பவும்',
+    invalidDate: 'தவறான தேதி அல்லது நேர வடிவம்',
+    sessionBooked: (tutorName: string) => `${tutorName} உடன் வகுப்பு பதிவு செய்யப்பட்டது! உங்கள் வகுப்புகளில் சேர்க்கப்பட்டது.`,
+    bookingError: 'வகுப்பு பதிவில் பிழை. மீண்டும் முயற்சிக்கவும்.',
+    requestSubmitted: 'வகுப்பு கோரிக்கை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! ஆசிரியர் உங்கள் கோரிக்கையை மதிப்பாய்வு செய்து உறுதிப்படுத்துவார்.',
+    requestError: 'கோரிக்கை சமர்ப்பிப்பதில் பிழை. மீண்டும் முயற்சிக்கவும்.'
   };
 
   return (
@@ -169,8 +179,8 @@ export function EduBridge() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">EduBridge</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">Connect with tutors and get help with your studies</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">எடுபிரிட்ஜ்</h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">ஆசிரியர்களுடன் இணைந்து உங்கள் கல்வியில் உதவி பெறுங்கள்</p>
         </div>
         <div className="mt-4 md:mt-0">
           <Button 
@@ -181,7 +191,7 @@ export function EduBridge() {
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Request Session
+            வகுப்பு கோர
           </Button>
         </div>
       </div>
@@ -197,7 +207,7 @@ export function EduBridge() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             }`}
           >
-            Sessions
+            வகுப்புகள்
           </button>
           <button
             onClick={() => setActiveTab('tutors')}
@@ -207,7 +217,7 @@ export function EduBridge() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             }`}
           >
-            Find Tutors
+            ஆசிரியர்களைக் கண்டறிக
           </button>
           <button
             onClick={() => setActiveTab('availability')}
@@ -217,7 +227,7 @@ export function EduBridge() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             }`}
           >
-            Availability
+            கிடைக்கும் நேரம்
           </button>
           <button
             onClick={() => setActiveTab('badges')}
@@ -227,7 +237,7 @@ export function EduBridge() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             }`}
           >
-            Badges
+            பதக்கங்கள்
           </button>
         </nav>
       </div>
@@ -243,7 +253,9 @@ export function EduBridge() {
           >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {selectedTutor ? `Request Session with ${selectedTutor.name}` : 'Request New Session'}
+                {selectedTutor 
+                  ? `${selectedTutor.name} உடன் வகுப்பு கோரிக்கை`
+                  : 'புதிய வகுப்பு கோரிக்கை'}
               </h3>
               <button
                 onClick={handleCloseRequestForm}
@@ -256,7 +268,7 @@ export function EduBridge() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Date
+                  தேதி
                 </label>
                 <Input
                   type="date"
@@ -269,7 +281,7 @@ export function EduBridge() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Time
+                  நேரம்
                 </label>
                 <Input
                   type="time"
@@ -281,7 +293,7 @@ export function EduBridge() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Subject
+                  பாடம்
                 </label>
                 <select
                   className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -289,24 +301,24 @@ export function EduBridge() {
                   onChange={(e) => setSessionSubject(e.target.value)}
                   required
                 >
-                  <option value="">Select Subject</option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="Physics">Physics</option>
-                  <option value="Computer Science">Computer Science</option>
-                  <option value="English Literature">English Literature</option>
-                  <option value="Writing">Writing</option>
-                  <option value="Economics">Economics</option>
-                  <option value="Business">Business</option>
+                  <option value="">பாடத்தைத் தேர்ந்தெடுக்கவும்</option>
+                  <option value="Mathematics">கணிதம்</option>
+                  <option value="Physics">இயற்பியல்</option>
+                  <option value="Computer Science">கணினி அறிவியல்</option>
+                  <option value="English Literature">ஆங்கில இலக்கியம்</option>
+                  <option value="Writing">எழுத்து</option>
+                  <option value="Economics">பொருளியல்</option>
+                  <option value="Business">வணிகம்</option>
                 </select>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Topic
+                  தலைப்பு
                 </label>
                 <Input
                   type="text"
-                  placeholder="Enter specific topic"
+                  placeholder="குறிப்பிட்ட தலைப்பை உள்ளிடவும்"
                   value={sessionTopic}
                   onChange={(e) => setSessionTopic(e.target.value)}
                   required
@@ -319,13 +331,13 @@ export function EduBridge() {
                 variant="outline"
                 onClick={handleCloseRequestForm}
               >
-                Cancel
+                ரத்து செய்
               </Button>
               <Button
                 variant="primary"
                 onClick={handleRequestSession}
               >
-                Request Session
+                வகுப்பு கோர
               </Button>
             </div>
           </motion.div>
@@ -367,7 +379,7 @@ export function EduBridge() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                  Subjects Covered
+                  கற்பிக்கும் பாடங்கள்
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedTutor.subjects?.map((subject: string) => (
@@ -380,7 +392,7 @@ export function EduBridge() {
 
               <div>
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                  Session History
+                  வகுப்பு வரலாறு
                 </h4>
                 <div className="space-y-3">
                   {mockTutorSessions
@@ -395,7 +407,7 @@ export function EduBridge() {
                           {session.subject}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Topic: {session.topic}
+                          தலைப்பு: {session.topic}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           {new Date(session.date).toLocaleDateString()}
@@ -411,7 +423,7 @@ export function EduBridge() {
                 variant="outline"
                 onClick={() => setShowTutorProfile(false)}
               >
-                Close
+                மூடு
               </Button>
               <Button
                 variant="primary"
@@ -420,7 +432,7 @@ export function EduBridge() {
                   handleBookSession(selectedTutor);
                 }}
               >
-                Book Session
+                வகுப்பு பதிவு செய்
               </Button>
             </div>
           </motion.div>
@@ -435,15 +447,15 @@ export function EduBridge() {
           transition={{ duration: 0.3 }}
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Sessions</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">உங்கள் வகுப்புகள்</h2>
             <div className="flex space-x-2">
               <Button variant="outline" size="sm">
                 <Calendar className="h-4 w-4 mr-2" />
-                Calendar View
+                நாட்காட்டி பார்வை
               </Button>
               <Button variant="outline" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
-                Filter
+                வடிகட்டி
                 <ChevronDown className="h-4 w-4 ml-1" />
               </Button>
             </div>
@@ -475,12 +487,12 @@ export function EduBridge() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
                 <Calendar className="h-8 w-8 text-gray-500 dark:text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No sessions yet</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">வகுப்புகள் எதுவும் இல்லை</h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-                You don't have any tutoring sessions scheduled yet. Find a tutor and book your first session!
+                நீங்கள் இன்னும் எந்த வகுப்புகளையும் திட்டமிடவில்லை. ஒரு ஆசிரியரைக் கண்டறிந்து உங்கள் முதல் வகுப்பைப் பதிவு செய்யுங்கள்!
               </p>
               <Button variant="primary" onClick={() => setActiveTab('tutors')}>
-                Find a Tutor
+                ஆசிரியரைக் கண்டறிக
               </Button>
             </div>
           )}
@@ -495,12 +507,12 @@ export function EduBridge() {
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Available Tutors</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">கிடைக்கும் ஆசிரியர்கள்</h2>
             <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input 
-                  placeholder="Search tutors..." 
+                  placeholder="ஆசிரியர்களைத் தேட..." 
                   className="pl-10"
                 />
               </div>
@@ -509,14 +521,14 @@ export function EduBridge() {
                 value={subjectFilter}
                 onChange={(e) => setSubjectFilter(e.target.value)}
               >
-                <option value="">All Subjects</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Physics">Physics</option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="English Literature">English Literature</option>
-                <option value="Writing">Writing</option>
-                <option value="Economics">Economics</option>
-                <option value="Business">Business</option>
+                <option value="">அனைத்து பாடங்கள்</option>
+                <option value="Mathematics">கணிதம்</option>
+                <option value="Physics">இயற்பியல்</option>
+                <option value="Computer Science">கணினி அறிவியல்</option>
+                <option value="English Literature">ஆங்கில இலக்கியம்</option>
+                <option value="Writing">எழுத்து</option>
+                <option value="Economics">பொருளியல்</option>
+                <option value="Business">வணிகம்</option>
               </select>
             </div>
           </div>
@@ -549,7 +561,7 @@ export function EduBridge() {
                     <div className="mt-4">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Subjects:</h4>
                       <div className="flex flex-wrap gap-2">
-                        {tutor.subjects?.map((subject) => (
+                        {tutor.subjects?.map((subject: string) => (
                           <Badge key={subject} variant="primary">
                             {subject}
                           </Badge>
@@ -562,13 +574,13 @@ export function EduBridge() {
                         variant="primary"
                         onClick={() => handleBookSession(tutor)}
                       >
-                        Book Session
+                        வகுப்பு பதிவு செய்
                       </Button>
                       <Button 
                         variant="outline"
                         onClick={() => handleViewProfile(tutor)}
                       >
-                        View Profile
+                        சுயவிவரம் காண்க
                       </Button>
                     </div>
                   </CardContent>
@@ -588,19 +600,19 @@ export function EduBridge() {
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {currentUser.role === 'tutor' ? 'Your Availability' : 'Tutor Availability'}
+              {currentUser.role === 'tutor' ? 'உங்கள் கிடைப்பு' : 'ஆசிரியர் கிடைப்பு'}
             </h2>
             {currentUser.role === 'tutor' && (
               <Button variant="primary" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Time Slot
+                நேர வகை சேர்க்கவும்
               </Button>
             )}
           </div>
           
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
             <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
-              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+              {['ஞாயிறு', 'திங்கள்', 'செவ்வாய்', 'புதன்', 'வியாழன்', 'வெள்ளி', 'சனி'].map((day) => (
                 <div key={day} className="px-4 py-3 text-center font-medium text-gray-900 dark:text-white">
                   {day}
                 </div>
@@ -642,7 +654,7 @@ export function EduBridge() {
                             {avail.startTime} - {avail.endTime}
                           </div>
                           <div className="mt-1">
-                            {avail.subjects.map((subject) => (
+                            {avail.subjects.map((subject: string) => (
                               <Badge key={subject} variant="primary" size="sm" className="mr-1 mt-1">
                                 {subject}
                               </Badge>
@@ -650,7 +662,7 @@ export function EduBridge() {
                           </div>
                           {currentUser.role === 'student' && (
                             <Button variant="primary" size="sm" className="w-full mt-2 py-1 h-7">
-                              Book
+                              பதிவு செய்யவும்
                             </Button>
                           )}
                         </motion.div>
@@ -672,15 +684,15 @@ export function EduBridge() {
           transition={{ duration: 0.3 }}
         >
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Tutor Achievements</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">ஆசிரியர் சாதனைகள்</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Earn badges by helping students and maintaining high-quality tutoring sessions
+              மாணவர்களுக்கு உதவி உயர்தர வகுப்புகளை நடத்துவதன் மூலம் பதக்கங்களைப் பெறுங்கள்
             </p>
           </div>
           
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle>Progress Overview</CardTitle>
+              <CardTitle>முன்னேற்ற விவரம்</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center mb-4">
@@ -696,21 +708,21 @@ export function EduBridge() {
                     {currentUser.name}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    {currentUser.role === 'tutor' ? 'Tutor' : 'Student'}
+                    {currentUser.role === 'tutor' ? 'ஆசிரியர்' : 'மாணவர்'}
                   </p>
                   <div className="mt-2 flex items-center">
                     <Badge variant="primary" className="mr-2">
-                      {currentUser.points} points
+                      {currentUser.points} புள்ளிகள்
                     </Badge>
                     <Badge variant="accent">
-                      {currentUser.badges.length} badges earned
+                      {currentUser.badges.length} பதக்கங்கள் பெறப்பட்டன
                     </Badge>
                   </div>
                 </div>
               </div>
               
               <div className="mt-6">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Points to next level:</h4>
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">அடுத்த நிலைக்கான புள்ளிகள்:</h4>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                   <div 
                     className="bg-primary-600 h-2.5 rounded-full" 
@@ -718,8 +730,8 @@ export function EduBridge() {
                   ></div>
                 </div>
                 <div className="flex justify-between mt-1 text-xs text-gray-600 dark:text-gray-400">
-                  <span>{currentUser.points} points</span>
-                  <span>500 points</span>
+                  <span>{currentUser.points} புள்ளிகள்</span>
+                  <span>500 புள்ளிகள்</span>
                 </div>
               </div>
             </CardContent>

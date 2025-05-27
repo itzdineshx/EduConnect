@@ -10,110 +10,97 @@ export function Footer() {
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center">
                 <BookOpen className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-                <span className="ml-2 text-lg font-bold text-gray-900 dark:text-white">EduBridge</span>
+                <span className="ml-2 text-lg font-bold text-gray-900 dark:text-white">எடுபிரிட்ஜ்</span>
               </div>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Bridging the gap in education through innovative learning tools and peer connections.
+                புதுமையான கற்றல் கருவிகள் மற்றும் சக இணைப்புகள் மூலம் கல்வியில் உள்ள இடைவெளியை இணைக்கிறோம்.
               </p>
-              <div className="flex space-x-4 mt-4">
-                <a href="#" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                  <span className="sr-only">Twitter</span>
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                  <span className="sr-only">Facebook</span>
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                  <span className="sr-only">Instagram</span>
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                  <span className="sr-only">GitHub</span>
-                  <GitHub className="h-5 w-5" />
-                </a>
-              </div>
             </div>
+
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Platform</h3>
-              <ul className="mt-4 space-y-2">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                தயாரிப்புகள்
+              </h3>
+              <ul className="mt-4 space-y-4">
                 <li>
-                  <Link to="/edubridge" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    EduBridge
+                  <Link to="/edubridge" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    எடுபிரிட்ஜ்
                   </Link>
                 </li>
                 <li>
-                  <Link to="/mindmap" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    MindMap Master
+                  <Link to="/mindmap" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    மனவரைபட நிபுணர்
                   </Link>
                 </li>
                 <li>
-                  <Link to="/studybuddy" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    StudyBuddy
+                  <Link to="/studybuddy" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    படிப்புத் தோழன்
                   </Link>
                 </li>
                 <li>
-                  <Link to="/eduassist" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    EduAssist
+                  <Link to="/eduassist" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    கல்வி உதவி
                   </Link>
                 </li>
               </ul>
             </div>
+
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Support</h3>
-              <ul className="mt-4 space-y-2">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                ஆதரவு
+              </h3>
+              <ul className="mt-4 space-y-4">
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Help Center
-                  </a>
+                  <Link to="/help" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    உதவி மையம்
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Contact Us
-                  </a>
+                  <Link to="/contact" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    எங்களை தொடர்பு கொள்ள
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Privacy Policy
-                  </a>
+                  <Link to="/privacy" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    தனியுரிமைக் கொள்கை
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Terms of Service
-                  </a>
+                  <Link to="/terms" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    சேவை விதிமுறைகள்
+                  </Link>
                 </li>
               </ul>
             </div>
+
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Company</h3>
-              <ul className="mt-4 space-y-2">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                எங்களுடன் இணையுங்கள்
+              </h3>
+              <ul className="mt-4 space-y-4">
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    About Us
-                  </a>
+                  <Link to="/community" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    சமூகத்தில் சேருங்கள்
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Blog
-                  </a>
+                  <Link to="/blog" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    வலைப்பதிவு
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
-                    Partnerships
-                  </a>
+                  <Link to="/social" className="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    சமூக ஊடகங்கள்
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-200 dark:border-gray-800 py-6">
-          <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} EduBridge. All rights reserved.
+
+        <div className="py-8 border-t border-gray-200 dark:border-gray-800">
+          <p className="text-base text-gray-500 dark:text-gray-400 text-center">
+            © {new Date().getFullYear()} எடுபிரிட்ஜ். அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.
           </p>
         </div>
       </div>

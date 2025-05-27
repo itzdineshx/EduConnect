@@ -5,9 +5,12 @@ import { Button } from '../components/ui/Button';
 import { ModuleCard } from '../components/features/ModuleCard';
 import { modules, mockUsers } from '../data/mockData';
 import { LeaderboardItem } from '../components/features/LeaderboardItem';
+import { useLanguage } from '../lib/language';
 
 export function Home() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -33,10 +36,10 @@ export function Home() {
               transition={{ duration: 0.6 }}
             >
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                Bridge the Gap in Education
+                {t('home.hero.title')}
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-100">
-                Connect with peers, organize study groups, create visual mind maps, and leverage AI-powered learning tools.
+                {t('home.hero.subtitle')}
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button 
@@ -44,17 +47,18 @@ export function Home() {
                   className="bg-white text-primary-700 hover:bg-primary-50"
                   onClick={scrollToHowItWorks}
                 >
-                  Get Started
+                  {t('home.hero.getStarted')}
                 </Button>
                 <Button 
                   variant="outline" 
                   size="lg" 
                   className="border-white text-white hover:bg-primary-700"
                 >
-                  Learn More
+                  {t('home.hero.learnMore')}
                 </Button>
               </div>
             </motion.div>
+            
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -63,7 +67,7 @@ export function Home() {
             >
               <img 
                 src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-                alt="Students collaborating" 
+                alt={t('home.hero.imageAlt')} 
                 className="rounded-lg shadow-xl"
               />
             </motion.div>
@@ -81,24 +85,64 @@ export function Home() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Powerful Educational Modules
+              {t('home.features.title')}
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              EduBridge offers a suite of integrated tools designed to enhance your learning experience.
+              {t('home.features.subtitle')}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {modules.map((module, index) => (
-              <motion.div
-                key={module.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <ModuleCard module={module} />
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <ModuleCard
+              module={{
+                id: 'edubridge',
+                name: t('home.features.edubridge'),
+                description: t('home.features.edubridge'),
+                icon: 'book-open',
+                path: '/edubridge',
+                color: 'primary'
+              }}
+            />
+            <ModuleCard
+              module={{
+                id: 'mindmap',
+                name: t('home.features.mindmap'),
+                description: t('home.features.mindmap'),
+                icon: 'network',
+                path: '/mindmap',
+                color: 'secondary'
+              }}
+            />
+            <ModuleCard
+              module={{
+                id: 'studybuddy',
+                name: t('home.features.studybuddy'),
+                description: t('home.features.studybuddy'),
+                icon: 'users',
+                path: '/studybuddy',
+                color: 'accent'
+              }}
+            />
+            <ModuleCard
+              module={{
+                id: 'eduassist',
+                name: t('home.features.eduassist'),
+                description: t('home.features.eduassist'),
+                icon: 'file-text',
+                path: '/eduassist',
+                color: 'success'
+              }}
+            />
+          </div>
+
+          <div className="mt-12 text-center">
+            <Button 
+              variant="primary" 
+              size="lg"
+              onClick={() => navigate('/edubridge')}
+            >
+              {t('home.hero.getStarted')} <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
@@ -111,10 +155,10 @@ export function Home() {
             {...fadeIn}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              How EduBridge Works
+              {t('home.features.title')}
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Our platform provides a seamless experience for students and tutors alike.
+              {t('home.features.subtitle')}
             </p>
           </motion.div>
 
@@ -128,9 +172,11 @@ export function Home() {
               <div className="bg-primary-100 dark:bg-primary-900 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                 <Lightbulb className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Connect & Learn</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                {t('home.features.collaborative')}
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Find tutors or study groups based on your subjects and learning style. Schedule sessions and collaborate in real-time.
+                {t('home.features.collaborativeDesc')}
               </p>
             </motion.div>
 
@@ -143,9 +189,11 @@ export function Home() {
               <div className="bg-secondary-100 dark:bg-secondary-900 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                 <Target className="h-6 w-6 text-secondary-600 dark:text-secondary-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Organize & Visualize</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                {t('home.features.organize')}
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Create mind maps to organize concepts, collaborate on study materials, and export your work for easy review.
+                {t('home.features.organizeDesc')}
               </p>
             </motion.div>
 
@@ -158,9 +206,11 @@ export function Home() {
               <div className="bg-accent-100 dark:bg-accent-900 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                 <Award className="h-6 w-6 text-accent-600 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Achieve & Earn</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                {t('home.features.achieve')}
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Track your progress with gamification features. Earn badges and climb the leaderboard as you help others learn.
+                {t('home.features.achieveDesc')}
               </p>
             </motion.div>
           </div>
@@ -171,7 +221,7 @@ export function Home() {
               size="lg"
               onClick={() => navigate('/edubridge')}
             >
-              Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+              {t('home.hero.getStarted')} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -185,15 +235,14 @@ export function Home() {
             {...fadeIn}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Top Contributors
+              {t('home.topContributors')}
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Recognizing our most active community members.
+              {t('home.leaderboardDesc')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 gap-4 max-w-3xl mx-auto">
-            {/* Sort users by points and show top 5 */}
             {[...mockUsers]
               .sort((a, b) => b.points - a.points)
               .slice(0, 5)
@@ -211,37 +260,37 @@ export function Home() {
 
           <div className="mt-8 text-center">
             <Button variant="outline">
-              View Full Leaderboard <ArrowRight className="ml-2 h-4 w-4" />
+              {t('home.leaderboard')} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-accent-600 to-accent-800 dark:from-accent-900 dark:to-accent-800 text-white">
+      <section className="bg-gradient-to-r from-accent-600 to-accent-800 py-16 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold">Ready to Transform Your Learning Journey?</h2>
+            <h2 className="text-3xl font-bold">{t('home.cta.title')}</h2>
             <p className="mt-4 text-lg text-accent-100 max-w-2xl mx-auto">
-              Join thousands of students and educators on EduBridge today.
+              {t('home.cta.subtitle')}
             </p>
             <div className="mt-8 flex justify-center space-x-4">
               <Button 
                 size="lg" 
                 className="bg-white text-accent-700 hover:bg-accent-50"
               >
-                Sign Up Now
+                {t('home.cta.register')}
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
                 className="border-white text-white hover:bg-accent-700"
               >
-                Schedule a Demo
+                {t('home.cta.demo')}
               </Button>
             </div>
           </motion.div>

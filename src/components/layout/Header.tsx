@@ -2,23 +2,25 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, BookOpen, LogIn, LogOut } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { LanguageSelector } from '../ui/LanguageSelector';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../lib/auth';
+import { useLanguage } from '../../lib/language';
 
 const studentNavigation = [
-  { name: 'Home', href: '/' },
-  { name: 'EduBridge', href: '/edubridge' },
-  { name: 'MindMap Master', href: '/mindmap' },
-  { name: 'StudyBuddy', href: '/studybuddy' },
-  { name: 'EduAssist', href: '/eduassist' },
+  { name: 'nav.home', href: '/' },
+  { name: 'nav.edubridge', href: '/edubridge' },
+  { name: 'nav.mindmap', href: '/mindmap' },
+  { name: 'nav.studybuddy', href: '/studybuddy' },
+  { name: 'nav.eduassist', href: '/eduassist' },
 ];
 
 const tutorNavigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Profile', href: '/tutor-dashboard?tab=profile' },
-  { name: 'Requests', href: '/tutor-dashboard?tab=requests' },
-  { name: 'Sessions', href: '/tutor-dashboard?tab=sessions' },
+  { name: 'nav.home', href: '/' },
+  { name: 'nav.profile', href: '/tutor-dashboard?tab=profile' },
+  { name: 'nav.requests', href: '/tutor-dashboard?tab=requests' },
+  { name: 'nav.sessions', href: '/tutor-dashboard?tab=sessions' },
 ];
 
 export function Header() {
@@ -26,6 +28,7 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   const navigation = user?.role === 'tutor' ? tutorNavigation : studentNavigation;
 
@@ -54,13 +57,14 @@ export function Header() {
                       : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 hover:text-gray-700 dark:hover:text-gray-200'
                   )}
                 >
-                  {item.name}
+                  {t(item.name)}
                 </Link>
               ))}
             </nav>
           </div>
 
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             <ThemeToggle />
             {user ? (
               <div className="hidden md:flex items-center space-x-4">
@@ -68,12 +72,12 @@ export function Header() {
                   {user.name} ({user.role})
                 </span>
                 <Button variant="outline" size="sm" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                  <LogOut className="h-4 w-4 mr-2" /> {t('nav.signOut')}
                 </Button>
               </div>
             ) : (
               <Button variant="primary" size="sm" className="hidden md:flex" onClick={() => navigate('/auth')}>
-                <LogIn className="h-4 w-4 mr-2" /> Sign In
+                <LogIn className="h-4 w-4 mr-2" /> {t('nav.signIn')}
               </Button>
             )}
             <div className="md:hidden">
@@ -109,7 +113,7 @@ export function Header() {
               )}
               onClick={() => setIsMenuOpen(false)}
             >
-              {item.name}
+              {t(item.name)}
             </Link>
           ))}
           {user ? (
@@ -118,12 +122,12 @@ export function Header() {
                 {user.name} ({user.role})
               </div>
               <Button variant="outline" className="w-full" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                <LogOut className="h-4 w-4 mr-2" /> {t('nav.signOut')}
               </Button>
             </>
           ) : (
             <Button variant="primary" className="w-full" onClick={() => navigate('/auth')}>
-              <LogIn className="h-4 w-4 mr-2" /> Sign In
+              <LogIn className="h-4 w-4 mr-2" /> {t('nav.signIn')}
             </Button>
           )}
         </div>

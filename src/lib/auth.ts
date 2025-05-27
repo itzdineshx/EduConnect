@@ -16,6 +16,7 @@ interface User {
 interface AuthState {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
   logout: () => void;
 }
 
@@ -65,6 +66,19 @@ export const useAuth = create<AuthState>((set) => ({
       return true;
     }
     return false;
+  },
+  register: async (name: string, email: string, password: string, role: UserRole) => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    set({
+      user: {
+        id: '1',
+        name,
+        email,
+        role,
+        points: 0,
+      },
+    });
   },
   logout: () => set({ user: null }),
 }));

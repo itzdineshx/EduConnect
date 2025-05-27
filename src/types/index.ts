@@ -101,18 +101,28 @@ export interface Note {
   userId: string;
   title: string;
   content: string;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  tags?: string[];
 }
 
 export interface NoteSummary {
   id: string;
   noteId: string;
-  summary: string;
-  keyPoints: string[];
-  flashcards: Flashcard[];
+  title: string;
+  content: string;
   createdAt: Date;
+  model: string;
+  confidence: number;
+  summary?: string;
+  keyPoints?: string[];
+  metadata?: {
+    complexity_score: number;
+    readability_score: number;
+    key_concepts_extracted: number;
+    suggested_prerequisites: string[];
+    recommended_practice_problems: number;
+  };
 }
 
 export interface Flashcard {
@@ -120,6 +130,13 @@ export interface Flashcard {
   question: string;
   answer: string;
   tags: string[];
+  difficulty: 'basic' | 'intermediate' | 'advanced';
+  metadata?: {
+    confidence_score: number;
+    average_completion_time: number;
+    success_rate: number;
+    related_concepts: string[];
+  };
 }
 
 export type ModuleType = 'edubridge' | 'mindmap' | 'studybuddy' | 'eduassist';
@@ -131,4 +148,47 @@ export interface Module {
   icon: string;
   path: string;
   color: string;
+}
+
+export interface Quiz {
+  id: string;
+  title: string;
+  description: string;
+  flashcardIds: string[];
+  totalQuestions: number;
+  timeLimit: number;
+  createdAt: Date;
+  lastAttemptAt?: Date;
+  bestScore?: number;
+  difficultyLevel: 'basic' | 'intermediate' | 'advanced';
+  topics: string[];
+  learningObjectives: string[];
+}
+
+export interface QuizAttempt {
+  id: string;
+  quizId: string;
+  userId: string;
+  score: number;
+  startedAt: Date;
+  completedAt: Date;
+  answers: QuizAnswer[];
+  timeSpent: number;
+}
+
+export interface QuizAnswer {
+  flashcardId: string;
+  isCorrect: boolean;
+  userAnswer: string;
+  timeSpent: number;
+  correctAnswer?: string;
+  confidence: 'low' | 'medium' | 'high';
+}
+
+export type Language = 'en' | 'ta';
+
+export interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
 }

@@ -6,16 +6,19 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useAuth, UserRole } from '../lib/auth';
+import { useLanguage } from '../lib/language';
 
 export function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuth(state => state.login);
+  const { login } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const message = location.state?.message;
 
@@ -51,10 +54,10 @@ export function Auth() {
             <BookOpen className="h-12 w-12 text-primary-600 dark:text-primary-400" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome to EduBridge
+            {t('auth.welcome')}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to your account to continue
+            {t('auth.loginPrompt')}
           </p>
         </div>
 
@@ -93,7 +96,7 @@ export function Auth() {
               <div className="space-y-4">
                 <div>
                   <label htmlFor="email" className="sr-only">
-                    Email address
+                    {t('auth.email')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -105,7 +108,7 @@ export function Auth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10"
-                      placeholder="Email address"
+                      placeholder={t('auth.email')}
                       required
                     />
                   </div>
@@ -113,7 +116,7 @@ export function Auth() {
 
                 <div>
                   <label htmlFor="password" className="sr-only">
-                    Password
+                    {t('auth.password')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -125,10 +128,32 @@ export function Auth() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10"
-                      placeholder="Password"
+                      placeholder={t('auth.password')}
                       required
                     />
                   </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                    {t('auth.rememberMe')}
+                  </label>
+                </div>
+
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+                    {t('auth.forgotPassword')}
+                  </a>
                 </div>
               </div>
 
@@ -150,12 +175,12 @@ export function Auth() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Signing in...
+                    {t('nav.signIn')}
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
                     <LogIn className="h-5 w-5 mr-2" />
-                    Sign in
+                    {t('nav.signIn')}
                   </span>
                 )}
               </Button>
@@ -166,7 +191,7 @@ export function Auth() {
                   className="inline-flex items-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500"
                 >
                   <UserPlus className="h-4 w-4 mr-1" />
-                  Create an account
+                  {t('auth.register')}
                 </Link>
               </div>
             </form>
